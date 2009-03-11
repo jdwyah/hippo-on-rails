@@ -1,0 +1,12 @@
+.project
+.settings/
+config/database.yml
+db/development_structure.sql
+nbproject/
+index/
+config/ultrasphinx/development.conf
+tmp/cache
+tmp/attachment_fu
+.DS_Store
+*~
+.DS_Store

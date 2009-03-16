@@ -47,7 +47,7 @@ class InitialSchema < ActiveRecord::Migration
       t.integer :inviter_user_id
       t.integer :signup_user_id
       t.string :random_key
-      t.boolean :sent_email_ok
+      t.integer :sent_email_ok
       t.timestamps
     end
     
@@ -56,7 +56,7 @@ class InitialSchema < ActiveRecord::Migration
       t.integer :user_id
     end
     
-    create_table :occurences do |t|
+    create_table :occurrences do |t|
       t.string :type
       t.integer :user_id
       t.string :title
@@ -79,8 +79,8 @@ class InitialSchema < ActiveRecord::Migration
     end
 
 
-    create_table :topics_occurences do |t|
-      t.integer :occurence_id
+    create_table :topics_occurrences do |t|
+      t.integer :occurrence_id
       t.integer :topic_id
       t.integer :latitude
       t.integer :longitude
@@ -93,56 +93,18 @@ class InitialSchema < ActiveRecord::Migration
       t.integer :longitude
     end
 
-    add_foreign_key :topics, :user_id, :users
-    add_foreign_key :topics, :subject_id, :subjects
-    add_foreign_key :users, :subscription_id, :subscriptions
-    add_foreign_key :invitations, :inviter_user_id, :users, :id, 'invitations_users_inviter_fkey'
-    add_foreign_key :invitations, :signup_user_id, :users, :id, 'invitations_users_signup_fkey'
-
-    add_foreign_key :users_topics, :topic_id, :topics
-    add_foreign_key :users_topics, :user_id, :users
-    add_foreign_key :occurences, :user_id, :users
-
-    add_foreign_key :topics_associations, :association_id, :topics, :id, 'topics_associations_topics_association_fkey'
-    add_foreign_key :topics_associations, :topic_id, :topics, :id, 'topics_associations_topics_topic_fkey'
-
-    add_foreign_key :topics_occurences, :occurence_id, :occurences
-    add_foreign_key :topics_occurences, :topic_id, :topics
-    add_foreign_key :topics_topics, :from_id, :topics, :id, 'topics_topics_topics_from_fkey'
-    add_foreign_key :topics_topics, :to_id, :topics, :id, 'topics_topics_topics_to_fkey'
-
-
   end
 
   def self.down
-
-    remove_foreign_key :topics, :users
-    remove_foreign_key :topics, :subjects
-    remove_foreign_key :users, :subscriptions
-    remove_foreign_key :invitations, :users, 'invitations_users_inviter_fkey'
-    remove_foreign_key :invitations, :users, 'invitations_users_signup_fkey'
-
-    remove_foreign_key :users_topics, :topics
-    remove_foreign_key :users_topics, :users
-    remove_foreign_key :occurences, :users
-
-    remove_foreign_key :topics_associations, :associations, 'topics_associations_topics_association_fkey'
-    remove_foreign_key :topics_associations, :topics, 'topics_associations_topics_topic_fkey'
-
-    remove_foreign_key :topics_occurences, :occurences
-    remove_foreign_key :topics_occurences, :topics
-    remove_foreign_key :topics_topics, :topics, 'topics_topics_topics_from_fkey'
-    remove_foreign_key :topics_topics, :topics, 'topics_topics_topics_to_fkey'
-
     drop_table :subscriptions
     drop_table :topics
     drop_table :users
     drop_table :invitations
     drop_table :users_topics
-    drop_table :occurences
+    drop_table :occurrences
     drop_table :subjects
     drop_table :topics_associations
-    drop_table :topics_occurences
+    drop_table :topics_occurrences
     drop_table :topics_topics
   end
 end

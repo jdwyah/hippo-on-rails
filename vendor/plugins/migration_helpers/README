@@ -1,0 +1,25 @@
+Helpers for your Rails migrations.
+
+script/plugin install git://github.com/patientslikeme/migration_helpers.git  
+
+
+Example
+=======
+
+  # insert a row using a Ruby hash
+  insert_row 'books', :name => 'Fellowship of the Ring', :author => 'Tolkien', :price => 9.99
+  
+  # update one or more rows
+  update_row 'books', :set => { :price => 4.99 }, :where => { :name => 'Fellowship of the Ring' }
+  update_row 'books', :set => 'price=price/2', :where => 'author is not null' 
+  update_row 'books', :set => { :price => 4.99 }, :update_all => true
+
+  # delete rows using a Ruby hash
+  delete_row 'books', :author => 'Tolkien'
+  delete_row 'books', :delete_all => true
+
+  # add a foreign key constraint
+  add_foreign_key 'books', 'author_id', 'authors'
+
+
+Copyright (c) 2008 PatientsLikeMe, Inc., released under the MIT license

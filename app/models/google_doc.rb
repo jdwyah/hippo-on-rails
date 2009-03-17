@@ -1,0 +1,2 @@
+class GoogleDoc < Topic
+end

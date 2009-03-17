@@ -1,0 +1,2 @@
+class GoogleSpread < Topic
+end

@@ -1,0 +1,2 @@
+class MetaDate < Topic
+end

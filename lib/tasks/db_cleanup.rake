@@ -34,6 +34,31 @@ where
 not exists (select 1 from topics where topics.id = tt.topic_id)
 EOS
       ActiveRecord::Base.connection.execute(sql_str)
+
+
+      conversions = {'seealso' => 'SeeAlso',
+        'association' => 'Association',        
+        'date' => 'DateTopic',
+        'entry' => 'Entry',
+        'file' => 'FileTopic',        
+        'gdoc' => 'GoogleDoc',
+        'gspread' => 'GoogleSpread',
+        'link' => 'Weblink',
+        'location' => 'Location',
+        'metadate' => 'MetaDate',
+        'metalocation' => 'MetaLocation',
+        'metatext' => 'MetaText',
+        'metatopic' => 'MetaTopic',
+        'root' => 'Root',
+        'text' => 'Text',
+        'Text' => 'TextTopic'
+      }
+
+      conversions.each do |from, to|
+        sql_str ="update topics set type = '#{to}' where type = '#{from}'"
+        ActiveRecord::Base.connection.execute(sql_str)
+      end
+
     end
   end
 end

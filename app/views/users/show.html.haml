@@ -1,0 +1,6 @@
+%h1
+  == Name #{@user.login}
+%ol
+  - for topic in @user.topics
+    %li
+      == Title #{topic.title} Type #{topic.type}

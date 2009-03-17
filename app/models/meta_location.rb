@@ -1,0 +1,2 @@
+class MetaLocation < Topic
+end

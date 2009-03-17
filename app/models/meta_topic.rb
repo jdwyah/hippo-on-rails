@@ -1,0 +1,2 @@
+class MetaTopic < Topic
+end

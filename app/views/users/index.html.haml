@@ -1,0 +1,9 @@
+#all
+  - debugger
+  %ul
+    - User.all.each do |user|
+      %li
+        == User: #{user.login}
+        = link_to user.login, user
+
+

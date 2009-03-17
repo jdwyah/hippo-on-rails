@@ -1,0 +1,2 @@
+class DateTopic < Topic
+end

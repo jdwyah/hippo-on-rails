@@ -1,0 +1,2 @@
+class TextTopic < Topic
+end

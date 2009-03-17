@@ -1,0 +1,2 @@
+class SeeAlso < Topic
+end

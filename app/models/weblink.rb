@@ -1,0 +1,2 @@
+class Weblink < Topic
+end

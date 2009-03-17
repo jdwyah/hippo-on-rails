@@ -1,0 +1,2 @@
+class FileTopic < Topic
+end

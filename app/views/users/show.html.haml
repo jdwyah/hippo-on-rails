@@ -3,4 +3,8 @@
 %ol
   - for topic in @user.topics
     %li
-      == Title #{topic.title} Type #{topic.type}
+      == Title #{topic.id} #{topic.title} Type #{topic.type}
+      %ol
+        - for has in topic.topics
+          %li
+            == !!!!!Has #{has.title} type #{has.type}

@@ -1,2 +1,0 @@
-class MetaDate < Topic
-end

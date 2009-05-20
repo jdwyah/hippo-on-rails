@@ -1,2 +1,0 @@
-class Root < Topic
-end

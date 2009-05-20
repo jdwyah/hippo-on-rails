@@ -1,2 +1,0 @@
-class TextTopic < Topic
-end

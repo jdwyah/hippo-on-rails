@@ -1,2 +1,0 @@
-class FileTopic < Topic
-end

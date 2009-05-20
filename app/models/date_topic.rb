@@ -1,2 +1,0 @@
-class DateTopic < Topic
-end

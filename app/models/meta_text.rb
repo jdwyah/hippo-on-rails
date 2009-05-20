@@ -1,2 +1,0 @@
-class MetaText < Topic
-end

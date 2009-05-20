@@ -1,2 +1,0 @@
-class MetaTopic < Topic
-end

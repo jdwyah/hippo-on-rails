@@ -1,2 +1,0 @@
-class GoogleSpread < Topic
-end

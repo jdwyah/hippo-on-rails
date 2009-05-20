@@ -6,11 +6,11 @@ At MyHippocampus our mission is to take your ideas, knowledge, & influences and 
 
 h2. A way to visualize knowledge
 
-Folders full of .doc's are for modern day Kafka enthusiasts. MyHippocampus let's you find information in a more human & humane way.
-To do this, we've thrown out the desktop metaphor. Instead of files & folders, the atom of our system is a topic in a topic map, which, like your brain, focusses on the relationships between topics. We engage your spatial & temporal memory to help you visualize & organize your topic maps.
-Create your own virtual mental landscape. Some concepts don't fit on the map of this world, but spatial location isn't just for the real world anymore! Don't worry if this sounds complicated. It's easy, and building your virtual mental landscape will make you swear off folders forever.
-View timelines of everything. A bodybuilder's mirror for your intellectual life. How many books did I read last year? Visualize your progress throught the canon and your goal of finally becoming 'well-read' starts to feel a little more doable.
-See how your topics relate to each other in time. After she crushed your will to live which books did you start reading? Interesting. Start to notice patterns. Start to avoid the old mistakes.
+* Folders full of .doc's are for modern day Kafka enthusiasts. MyHippocampus let's you find information in a more human & humane way.
+* To do this, we've thrown out the desktop metaphor. Instead of files & folders, the atom of our system is a topic in a topic map, which, like your brain, focusses on the relationships between topics. We engage your spatial & temporal memory to help you visualize & organize your topic maps.
+* Create your own virtual mental landscape. Some concepts don't fit on the map of this world, but spatial location isn't just for the real world anymore! Don't worry if this sounds complicated. It's easy, and building your virtual mental landscape will make you swear off folders forever.
+* View timelines of everything. A bodybuilder's mirror for your intellectual life. How many books did I read last year? Visualize your progress throught the canon and your goal of finally becoming 'well-read' starts to feel a little more doable.
+* See how your topics relate to each other in time. After she crushed your will to live which books did you start reading? Interesting. Start to notice patterns. Start to avoid the old mistakes.
 
 h2. A way to connect to literature
 
@@ -18,6 +18,21 @@ Put in Great Expectations, then put it on the map. Flag the estuaries of the Tha
 
 h2. A place to think more interesting thoughts
 
-No To-Do lists. No shackles. No news-reader feeds. No manacles. No ads. This is your space. A place for thoughts that move at a different speed.
-A way to remember what's really important
-Only take with you that which you truly want.
+* No To-Do lists. No shackles. No news-reader feeds. No manacles. No ads. This is your space. A place for thoughts that move at a different speed.
+* A way to remember what's really important
+* Only take with you that which you truly want.
+
+
+h1. To Contribute
+
+MyHippocampus is going to try to be an open-company. You can probably guess what that means. There's a similar effort described
+"here":http://e-texteditor.com/blog/2009/opencompany. The goal is to create a system which is easy for new people to contribute to,
+but which also has a way to compensate contributors for their. You help us, we help you.
+
+All of this is a bit moot without any revenue, but the deal for now is this: contribute to MyHippocampus and, if the project get's off the ground,
+we will tally up the weight of contributions made and attempt to do some sort of profit share. This should not be read as a guarantee. MyHippocampus
+has complete discretion over how, when and if you are compensated at all and in all likelihood this won't amount to anything. Contributions are not
+shares in the company or redeemable in any way and you will not be an employee or contractor. You must simply rely upon the hope that MyHippocampus is one-day in a position to try to encourage
+further contributions by compensating those that have contributed.
+
+All trademarks and materials are the property of MyHippocampus LLC and their use is prohibited.

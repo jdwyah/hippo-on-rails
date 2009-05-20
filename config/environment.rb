@@ -23,6 +23,7 @@ Rails::Initializer.run do |config|
   config.gem "authlogic", :version => "2.0.5"
   config.gem "authlogic-oid", :lib => "authlogic_openid", :version => '1.0.3'
   config.gem "bcrypt-ruby", :lib => 'bcrypt', :version => "2.0.5"
+  config.gem 'chriseppstein-compass', :lib => 'compass'
   
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named

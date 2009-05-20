@@ -21,6 +21,7 @@ Rails::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem "haml", :version => '2.0.9'
   config.gem "authlogic", :version => "2.0.5"
+  config.gem "authlogic-oid", :lib => "authlogic_openid", :version => '1.0.3'
   config.gem "bcrypt-ruby", :lib => 'bcrypt', :version => "2.0.5"
   
   # Only load the plugins named here, in the order given (default is alphabetical).

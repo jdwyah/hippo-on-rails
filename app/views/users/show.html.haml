@@ -1,10 +1,2 @@
 %h1
   == Name #{@user.login}
-%ol
-  - for topic in @user.topics
-    %li
-      == Title #{topic.id} #{topic.title} Type #{topic.type}
-      %ol
-        - for has in topic.topics
-          %li
-            == !!!!!Has #{has.title} type #{has.type}

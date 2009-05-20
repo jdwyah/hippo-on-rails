@@ -9,97 +9,41 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090330212701) do
+ActiveRecord::Schema.define(:version => 20090520224205) do
 
-  create_table "invitations", :force => true do |t|
-    t.string   "email"
-    t.string   "user_agent"
-    t.string   "referer"
-    t.string   "host"
-    t.integer  "inviter_user_id"
-    t.integer  "signup_user_id"
-    t.string   "random_key"
-    t.integer  "sent_email_ok"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "open_id_authentication_associations", :force => true do |t|
+    t.integer "issued"
+    t.integer "lifetime"
+    t.string  "handle"
+    t.string  "assoc_type"
+    t.binary  "server_url"
+    t.binary  "secret"
   end
 
-  create_table "occurrences", :force => true do |t|
-    t.string   "type"
-    t.integer  "user_id"
-    t.string   "title"
+  create_table "open_id_authentication_nonces", :force => true do |t|
+    t.integer "timestamp",  :null => false
+    t.string  "server_url"
+    t.string  "salt",       :null => false
+  end
+
+  create_table "sessions", :force => true do |t|
+    t.string   "session_id", :null => false
     t.text     "data"
-    t.datetime "updated_at"
-    t.datetime "created_at"
-    t.string   "uri"
-    t.integer  "mind_tree_id"
-  end
-
-  create_table "subjects", :force => true do |t|
-    t.string "type"
-    t.string "foreign_id"
-    t.string "name"
-  end
-
-  create_table "subscriptions", :force => true do |t|
-    t.string   "description"
-    t.float    "price"
-    t.integer  "max_topics"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "topics", :force => true do |t|
-    t.string   "type"
-    t.integer  "user_id"
-    t.string   "title"
-    t.datetime "updated_at"
-    t.datetime "created_at"
-    t.integer  "public_visible"
-    t.integer  "subject"
-    t.integer  "subject_id"
-    t.integer  "latitude"
-    t.integer  "longitude"
-    t.text     "data"
-    t.string   "uri"
-    t.string   "title_lower"
-  end
-
-  create_table "topics_associations", :force => true do |t|
-    t.integer "association_id"
-    t.integer "topic_id"
-  end
-
-  create_table "topics_occurrences", :force => true do |t|
-    t.integer "occurrence_id"
-    t.integer "topic_id"
-    t.integer "latitude"
-    t.integer "longitude"
-  end
-
-  create_table "topics_topics", :force => true do |t|
-    t.integer "from_id"
-    t.integer "to_id"
-    t.integer "latitude"
-    t.integer "longitude"
-  end
+  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
+  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
   create_table "users", :force => true do |t|
-    t.string   "login"
-    t.string   "crypted_password"
-    t.string   "email"
-    t.integer  "enabled"
-    t.integer  "supervisor"
-    t.integer  "invitations"
-    t.integer  "subscription_id"
-    t.string   "paypal_id"
-    t.date     "last_delicious_import"
-    t.date     "last_google_apps_import"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "login"
+    t.string   "crypted_password"
     t.string   "password_salt"
-    t.string   "persistence_token"
-    t.integer  "login_count"
+    t.string   "persistence_token",                :null => false
+    t.integer  "login_count",       :default => 0, :null => false
     t.datetime "last_request_at"
     t.datetime "last_login_at"
     t.datetime "current_login_at"
@@ -108,12 +52,9 @@ ActiveRecord::Schema.define(:version => 20090330212701) do
     t.string   "openid_identifier"
   end
 
+  add_index "users", ["last_request_at"], :name => "index_users_on_last_request_at"
   add_index "users", ["login"], :name => "index_users_on_login"
   add_index "users", ["openid_identifier"], :name => "index_users_on_openid_identifier"
-
-  create_table "users_topics", :force => true do |t|
-    t.integer "topic_id"
-    t.integer "user_id"
-  end
+  add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
 
 end

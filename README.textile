@@ -1,0 +1,19 @@
+h1. MyHippocampus is...
+
+h2. On a mission
+At MyHippocampus our mission is to take your ideas, knowledge, & influences and let you connect, visualize & store them in a way that turns them into building blocks, resources which you can draw upon to aid your creative endeavors.
+
+h2. A way to visualize knowledge
+Folders full of .doc's are for modern day Kafka enthusiasts. MyHippocampus let's you find information in a more human & humane way.
+To do this, we've thrown out the desktop metaphor. Instead of files & folders, the atom of our system is a topic in a topic map, which, like your brain, focusses on the relationships between topics. We engage your spatial & temporal memory to help you visualize & organize your topic maps.
+Create your own virtual mental landscape. Some concepts don't fit on the map of this world, but spatial location isn't just for the real world anymore! Don't worry if this sounds complicated. It's easy, and building your virtual mental landscape will make you swear off folders forever.
+View timelines of everything. A bodybuilder's mirror for your intellectual life. How many books did I read last year? Visualize your progress throught the canon and your goal of finally becoming 'well-read' starts to feel a little more doable.
+See how your topics relate to each other in time. After she crushed your will to live which books did you start reading? Interesting. Start to notice patterns. Start to avoid the old mistakes.
+
+h2. A way to connect to literature
+tour.2.1=Put in Great Expectations, then put it on the map. Flag the estuaries of the Thames. Have you read Neal Stephenson's Baroque Cycle? If so there's another Thames connection. Ever got to be in a row boat on the Thames. Now you've got Dickens and ostentatious rowers on the same map. Maybe drop a flag in the Liffey for the time you got to row in Ireland. Put in another flag for Beckett's tower in western Ireland. Put in a flag for the pub down the road that served amazing grilled cheese sandwiches. Put in the recipe for grilled cheese sandwiches. Link to stories of the well remembered grilled cheeses of your youth. Or mozarella on your trip to Italy & Disco Fondu parties. Not resonating for you? That's because it's mine. Your's is waiting.
+
+h2. A place to think more interesting thoughts
+No To-Do lists. No shackles. No news-reader feeds. No manacles. No ads. This is your space. A place for thoughts that move at a different speed.
+A way to remember what's really important
+Only take with you that which you truly want.

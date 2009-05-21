@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090521194112) do
+ActiveRecord::Schema.define(:version => 20090521204802) do
 
   create_table "occurrences", :force => true do |t|
     t.string   "name"
@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(:version => 20090521194112) do
   create_table "property_types", :force => true do |t|
     t.integer  "topic_id"
     t.string   "name"
-    t.string   "type"
+    t.string   "type_name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

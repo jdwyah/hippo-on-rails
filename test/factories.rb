@@ -8,3 +8,8 @@ Factory.define :topic do |topic|
   topic.sequence(:name) {|n| "name_#{n}" }
   topic.user { Factory(:user)}
 end
+
+Factory.define :property_type do |ptype|
+  ptype.name 'Date Seen'
+  ptype.type_name 'DateProperty'
+end

@@ -11,3 +11,6 @@ tmp/attachment_fu
 *~
 .DS_Store
 log/*
+public/stylesheets/
+tmp/**/*
+tmp/*

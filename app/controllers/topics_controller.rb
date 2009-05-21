@@ -1,5 +1,6 @@
 class TopicsController < ApplicationController
   before_filter :require_user
+  before_filter :find_topic, :only => [:show, :edit, :update]
   
   def new
     @topic = Topic.new
@@ -10,15 +11,14 @@ class TopicsController < ApplicationController
   end
   
   def show
-    @topic = Topic.find(params[:id])
+    
   end
   
   def edit
-    @topic = Topic.find(params[:id])
+    
   end
 
   def update
-    @topic = Topic.find(params[:id])
     if @topic.update_attributes(params[:topic])
       flash[:notice] = "Topic updated!"
       redirect_to topics_url
@@ -26,5 +26,11 @@ class TopicsController < ApplicationController
       render :action => :edit
     end
   end
+  
+  protected
+  
+    def find_topic
+      @topic = Topic.find(params[:id])
+    end
 
 end

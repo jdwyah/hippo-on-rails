@@ -8,7 +8,7 @@ class UserSessionsController < ApplicationController
 
   def create
     @user_session = UserSession.new(params[:user_session])
-
+    
     @user_session.save do |result|
       if result
         flash[:notice] = "Login successful!"

@@ -1,4 +1,6 @@
 class TopicsController < ApplicationController
+  add_crumb("Topics") { |instance| instance.send :topics_path }
+
   before_filter :require_user
   before_filter :find_topic, :only => [:show, :edit, :update]
   
@@ -22,6 +24,10 @@ class TopicsController < ApplicationController
     end
   end
 
+  def show
+    add_crumb @topic.name, @topic
+  end
+
   def update
     if @topic.update_attributes(params[:topic])
       flash[:notice] = "Topic updated!"
@@ -34,7 +40,7 @@ class TopicsController < ApplicationController
   protected
   
     def find_topic
-      @topic = Topic.find(params[:id])
+      @topic = current_user.topics.find(params[:id])
     end
 
 end

@@ -1,0 +1,7 @@
+%ul.dropdown_items
+  -for topic in @topics
+    %li
+      %span.parameters{:style => "display:none"}
+        %span.tags_id= topic.id
+        %span.tags_name= topic.name
+      .topic-name= topic.name

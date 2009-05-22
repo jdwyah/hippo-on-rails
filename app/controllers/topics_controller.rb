@@ -4,7 +4,14 @@ class TopicsController < ApplicationController
   before_filter :require_user
   before_filter :find_topic, :only => [:show, :edit, :update]
   before_filter :crumb_me, :only => [:show, :edit, :update]
+
+  protect_from_forgery :only => [:create, :update, :destroy]
   
+  def tag_auto_complete
+    @topics = current_user.topics.find(:all, :conditions => ['name like ?', "#{params[:tags_name]}%"])
+    render :layout => false
+  end
+
   def index
     @topics = current_user.topics
   end

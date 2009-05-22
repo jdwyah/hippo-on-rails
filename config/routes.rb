@@ -37,7 +37,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resource :account, :controller => 'users'
   
-  map.resources :topics
+  map.resources :topics, :collection => { :tag_auto_complete => :any }
   
   map.tags 'topic/:id/topics', :controller => 'topics', :action => 'topics'
   

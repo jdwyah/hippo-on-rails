@@ -1,5 +1,13 @@
 module ApplicationHelper
-   def body_attributes
+  CORE_JAVASCRIPTS = [
+    'prototype',
+    'common',
+    '/__utm.js'
+  ] unless const_defined? :CORE_JAVASCRIPTS
+  JAVASCRIPT_SHORTCUTS = {
+  } unless const_defined? :JAVASCRIPT_SHORTCUTS
+
+  def body_attributes
     {:class => body_class, :id => body_id}
   end
 
@@ -37,4 +45,62 @@ module ApplicationHelper
     end
   end
   
+  def javascripts(*scripts, &block)
+    @javascripts ||= [] # Tracks javascripts added so far
+
+    # Handle multiple script args or single Array of script names
+    scripts = (scripts.any? and scripts[0].is_a? Array) ? scripts[0] : scripts
+    # Make sure we include core scripts, resolve shortcuts/dependencies and eliminate dupes
+    scripts = (CORE_JAVASCRIPTS + scripts) if @javascripts.empty? # Add core scripts if first time called
+
+    add_javascripts_to_page(scripts, &block)
+  end
+
+  #change javascript order to prepend before CORE_JAVASCRIPTS
+  def prepend_javascripts(*scripts, &block)
+    # Handle multiple script args or single Array of script names
+    scripts = (scripts.any? and scripts[0].is_a? Array) ? scripts[0] : scripts
+    add_javascripts_to_page(scripts + CORE_JAVASCRIPTS, &block)
+  end
+
+  def default_javascripts
+    build_javascript_tags(CORE_JAVASCRIPTS)
+  end
+
+  private
+
+  def add_javascripts_to_page(scripts, &block)
+    @javascripts ||= [] # Tracks javascripts added so far
+
+    scripts = flatten_javascripts(scripts) # Resolve any dependency shortcuts
+    scripts.reject! { |s| @javascripts.include?(s) } # Skip previously added scripts
+
+    # Build string of scripts tags and inline scripts to render
+    output = build_javascript_tags(scripts) # Generate script include tags
+    output << (capture(&block) + "\n") if block_given? # Generate inline scripts
+
+    # Make javascript available to layouts
+    content_for(:javascripts) { output }
+
+    # Log scripts we've added so they're not included again later
+    @javascripts += scripts
+  end
+
+  def flatten_javascripts(javascripts)
+    javascripts.uniq.map { |js| flatten_javascript(js) }.flatten
+  end
+
+  def flatten_javascript(script_name)
+    js_string = script_name.to_s
+    # Check if script name is a shortcut that maps to an array of libs
+    JAVASCRIPT_SHORTCUTS[js_string] || [js_string]
+  end
+  
+  def build_javascript_tags(javascripts)
+    output = javascripts.uniq.map do |script_name|
+      javascript_include_tag(script_name.to_s)
+    end.join("\n")
+
+    return output + "\n"
+  end
 end

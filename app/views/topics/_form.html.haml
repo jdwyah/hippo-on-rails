@@ -1,8 +1,26 @@
+- javascripts 'lowpro', 'controls', 'autocomplete_list.js' do
+  :javascript
+    Base.init(function() {
+      var ac = new SubmittingAutocompleteList('tags','tag_string',
+                                      '/topics/tag_auto_complete', $H());
+
+    });
+
+
 -form_for @topic do |f|
-  =f.label "Name"
-  %br
+
+  =f.label 'Name'
   =f.text_field :name
   %br
+
+  =f.label 'Tags'
+  %input.box{:name => "tags_name", :autocomplete => "off", :id => 'tags_name'}
+  #tags-ac-loading-indicator{:style => 'display: none'} loading...
+  %ul#tags_holder.facet-list
+  #tags_name_auto_complete.auto-complete
+
+  %br
+
   %br
   #properties
     =partial 'property_form', :collection => @topic.properties, :builder => f

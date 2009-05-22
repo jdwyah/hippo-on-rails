@@ -1,0 +1,21 @@
+@import base.sass
+
++sticky-footer( 10px, "#root", "#root_footer", "#footer" )
+
+body
+  +blueprint-grid
+  +blueprint-typography 
+  :background #262626
+#root
+  +container
+  #header
+    +normal-text
+    +column(24)
+    +last
+  #content
+    +normal-text
+    +column(24)
+    +last
+    +container 
+#footer
+  +normal-text

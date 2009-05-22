@@ -6,25 +6,28 @@
   %br
   #properties
     -@topic.properties.each do |property|
-      -f.fields_for :properties, property do |p|
-        -Rails.logger.info(property.inspect)
-        =p.label property.property_type.name
+      -f.fields_for :properties, property do |pf|
+        
+        =label_tag property.property_type.name
         %br
-        =property_edit p
+        =property_edit pf
+        %br
+        %br
+        =pf.text_field :property_type_id
         %br
         %br
   
   #property_types
-    -f.fields_for :property_types do |pf|
+    -f.fields_for :property_types do |pt|
       
-      =pf.label 'Property Name'
+      =pt.label 'Property Name'
       %br
-      =pf.text_field :name
+      =pt.text_field :name
       %br
       %br
-      =pf.label 'Property Type'
+      =pt.label 'Property Type'
       %br
-      =pf.select :type_name, PropertyType::VALID_TYPES
+      =pt.select :type_name, PropertyType::VALID_TYPES
       %br
       %br
     

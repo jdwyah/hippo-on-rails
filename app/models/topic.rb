@@ -15,7 +15,7 @@ class Topic < ActiveRecord::Base
   
   def setup_properties
     properties_to_use.each do |property_type|
-      properties << Property.new(:property_type_id => property_type.id) unless property_type_ids.include?(property_type.id)
+      properties.build(:property_type_id => property_type.id) unless property_type_ids.include?(property_type.id)
     end
   end
   

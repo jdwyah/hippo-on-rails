@@ -4,6 +4,16 @@
   =f.text_field :name
   %br
   %br
+  #properties
+    -@topic.properties.each do |property|
+      -f.fields_for :properties, property do |p|
+        -Rails.logger.info(property.inspect)
+        =p.label property.property_type.name
+        %br
+        =property_edit p
+        %br
+        %br
+  
   #property_types
     -f.fields_for :property_types do |pf|
       

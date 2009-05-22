@@ -2,8 +2,10 @@ class PropertyType < ActiveRecord::Base
   
   VALID_TYPES = %w( String Date Location )
   
-  validates_inclusion_of :type_name, :in => VALID_TYPES
+  has_many :topics_property_types
+  has_many :topics, :through => :topics_property_types
+  has_many :properties
   
-  belongs_to :topic
+  validates_inclusion_of :type_name, :in => VALID_TYPES
   
 end

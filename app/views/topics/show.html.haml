@@ -10,3 +10,5 @@
   
 .links
   = link_to 'Edit', edit_topic_url(@topic)
+  &nbsp;|&nbsp;
+  = link_to "Create a new #{@topic.name}", new_topic_url(:tag_id => @topic.id)

@@ -12,6 +12,11 @@ class TopicsController < ApplicationController
   def new
     @topic = Topic.new
     @topic.property_types.build
+    if params[:tag_id]
+      @tag = Topic.find(params[:tag_id])
+      @topic.tags << @tag
+      @topic.setup_properties
+    end
   end
   
   def create

@@ -1,4 +1,4 @@
 %dl.topic
   %dd.date= topic.created_at.to_s(:us_date)
-  %dt.title= topic.name
+  %dt.title= link_to topic.name, topic
   =partial 'property', :collection => topic.properties

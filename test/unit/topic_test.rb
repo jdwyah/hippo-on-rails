@@ -21,8 +21,8 @@ class TopicTest < ActiveSupport::TestCase
       end
 
       should "books should have dates read " do
-        assert_equals [@date_read], @book.property_types
-        assert_equals [@date_read], @crime_and_punishment.properties_to_use
+        assert_equal [@date_read], @book.property_types
+        assert_equal [@date_read], @crime_and_punishment.properties_to_use
       end
       
     end

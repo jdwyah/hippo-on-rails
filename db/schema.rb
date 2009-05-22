@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090521204802) do
+ActiveRecord::Schema.define(:version => 20090522131220) do
 
   create_table "occurrences", :force => true do |t|
     t.string   "name"
@@ -69,6 +69,11 @@ ActiveRecord::Schema.define(:version => 20090521204802) do
   create_table "topics_occurrences", :force => true do |t|
     t.integer "topic_id"
     t.integer "occurrence_id"
+  end
+
+  create_table "topics_property_types", :force => true do |t|
+    t.integer "topic_id"
+    t.integer "property_type_id"
   end
 
   create_table "topics_topics", :id => false, :force => true do |t|

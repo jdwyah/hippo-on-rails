@@ -1,13 +1,16 @@
 @import base.sass
-
-+sticky-footer( 10px, "#root", "#root_footer", "#footer" )
+!footer_height = 20px
++sticky-footer( !footer_height, "#root", "#root_footer", "#footer" )
 
 body
+  +container
   +blueprint-grid
   +blueprint-typography 
   :background #262626
 #root
   +container
+  +column(24)
+  +last
   #header
     +normal-text
     +column(24)
@@ -17,11 +20,9 @@ body
     #app-title
       +column(16)
     #app-links
+      :margin-top 50px
       +column(8)
       +last
-      a
-        +inline-block
-        :vertical-align bottom
       
   #content
     +normal-text
@@ -29,4 +30,7 @@ body
     +last
     +container 
 #footer
+  +column(24)
+  +last
   +normal-text
+  :margin-top= -!footer_height

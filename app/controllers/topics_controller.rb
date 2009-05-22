@@ -3,6 +3,7 @@ class TopicsController < ApplicationController
 
   before_filter :require_user
   before_filter :find_topic, :only => [:show, :edit, :update]
+  before_filter :crumb_me, :only => [:show, :edit, :update]
   
   def index
     @topics = current_user.topics
@@ -24,9 +25,6 @@ class TopicsController < ApplicationController
     end
   end
 
-  def show
-    add_crumb @topic.name, @topic
-  end
 
   def update
     if @topic.update_attributes(params[:topic])
@@ -39,8 +37,11 @@ class TopicsController < ApplicationController
   
   protected
   
-    def find_topic
-      @topic = current_user.topics.find(params[:id])
-    end
-
+  def find_topic
+    @topic = current_user.topics.find(params[:id])
+  end
+  
+  def crumb_me
+    add_crumb @topic.name, @topic
+  end
 end

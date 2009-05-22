@@ -1,0 +1,12 @@
+-builder.fields_for :property_types, property_type do |pf|
+
+  =pf.label 'Property Name'
+  %br
+  =pf.text_field :name
+  %br
+  %br
+  =pf.label 'Property Type'
+  %br
+  =pf.select :type_name, PropertyType::VALID_TYPES
+  %br
+  %br

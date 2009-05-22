@@ -1,0 +1,676 @@
+From 9584f495233c61e3cdec851e2190dd2dac4938d7 Mon Sep 17 00:00:00 2001
+From: Matt Hodgson <mhodgson@youcastr.com>
+Date: Fri, 22 May 2009 13:07:21 -0400
+Subject: working topics controller/views
+
+---
+ app/controllers/topics_controller.rb               |   22 +++--
+ app/helpers/application_helper.rb                  |   16 +++-
+ app/models/property_type.rb                        |    4 +
+ app/models/topic.rb                                |    5 +-
+ app/stylesheets/screen.sass                        |    1 +
+ app/views/layouts/application.html.haml            |    1 +
+ app/views/topics/_form.html.haml                   |   25 +++++
+ app/views/topics/_property.html.haml               |    3 +
+ app/views/topics/_property_list.html.haml          |    5 +
+ app/views/topics/_property_type.haml               |    3 +
+ app/views/topics/_property_type_form.haml          |   12 +++
+ app/views/topics/_topic.html.haml                  |    5 +
+ app/views/topics/edit.html.haml                    |    3 +
+ app/views/topics/index.html.haml                   |    4 +
+ app/views/topics/new.html.haml                     |    3 +
+ app/views/topics/show.html.haml                    |   11 +++
+ config/initializers/formats.rb                     |   23 +++++
+ config/routes.rb                                   |    2 +-
+ db/schema.rb                                       |   10 +-
+ vendor/plugins/better_partials/MIT-LICENSE         |   20 ++++
+ vendor/plugins/better_partials/README.rdoc         |   61 +++++++++++++
+ vendor/plugins/better_partials/Rakefile            |   22 +++++
+ .../better_partials/better_partials.gemspec        |   26 ++++++
+ vendor/plugins/better_partials/init.rb             |    1 +
+ .../plugins/better_partials/lib/better_partials.rb |   94 ++++++++++++++++++++
+ vendor/plugins/better_partials/uninstall.rb        |    1 +
+ 26 files changed, 364 insertions(+), 19 deletions(-)
+ create mode 100644 app/views/topics/_form.html.haml
+ create mode 100644 app/views/topics/_property.html.haml
+ create mode 100644 app/views/topics/_property_list.html.haml
+ create mode 100644 app/views/topics/_property_type.haml
+ create mode 100644 app/views/topics/_property_type_form.haml
+ create mode 100644 app/views/topics/_topic.html.haml
+ create mode 100644 app/views/topics/edit.html.haml
+ create mode 100644 app/views/topics/index.html.haml
+ create mode 100644 app/views/topics/new.html.haml
+ create mode 100644 app/views/topics/show.html.haml
+ create mode 100644 config/initializers/formats.rb
+ create mode 100644 vendor/plugins/better_partials/MIT-LICENSE
+ create mode 100644 vendor/plugins/better_partials/README.rdoc
+ create mode 100644 vendor/plugins/better_partials/Rakefile
+ create mode 100644 vendor/plugins/better_partials/better_partials.gemspec
+ create mode 100644 vendor/plugins/better_partials/init.rb
+ create mode 100644 vendor/plugins/better_partials/lib/better_partials.rb
+ create mode 100644 vendor/plugins/better_partials/uninstall.rb
+
+diff --git a/app/controllers/topics_controller.rb b/app/controllers/topics_controller.rb
+index a6c33c31a8e0d3f84da3c1fe1fbecc524f169741..4e3b0d815e0620219a32f9f086af27f681d068f6 100644
+--- a/app/controllers/topics_controller.rb
++++ b/app/controllers/topics_controller.rb
+@@ -2,26 +2,30 @@ class TopicsController < ApplicationController
+   before_filter :require_user
+   before_filter :find_topic, :only => [:show, :edit, :update]
+   
++  def index
++    @topics = current_user.topics
++  end
++  
+   def new
+     @topic = Topic.new
++    @topic.property_types.build
+   end
+   
+   def create
+-    @topic = Topic.new(params[:topic])
+-  end
+-  
+-  def show
+-    
+-  end
+-  
+-  def edit
++    @topic = current_user.topics.build(params[:topic])
+     
++    if @topic.save
++      flash[:notice] = "Topic created!"
++      redirect_to topic_url(@topic)
++    else
++      render :action => :new
++    end
+   end
+ 
+   def update
+     if @topic.update_attributes(params[:topic])
+       flash[:notice] = "Topic updated!"
+-      redirect_to topics_url
++      redirect_to topic_url(@topic)
+     else
+       render :action => :edit
+     end
+diff --git a/app/helpers/application_helper.rb b/app/helpers/application_helper.rb
+index f754e7a39e6beb6aecff4c054569aa60c50b9d86..63241e1f26b2a93c87d2d5cee534766528b6bedb 100644
+--- a/app/helpers/application_helper.rb
++++ b/app/helpers/application_helper.rb
+@@ -11,12 +11,22 @@ module ApplicationHelper
+     "#{@controller.controller_name.dasherize}-#{@controller.action_name.dasherize}"
+   end
+   
+-  def param_display(parameter)
+-    display = case parameter.type
++  def property_display(property)
++    display = case property.property_type.type
+       when 'String' : parameter.value
+-      when 'Date' : Date.parse(parameter.value).to_formatted_s(:main_date)
++      when 'Date' : Date.parse(parameter.value).to_s(:main_date)
+       else 'NOT DONE YET'
+     end
+   end
+   
++  def add_property_type_link(name, form)
++      link_to_function name do |page|
++        property_type = partial 'topics/property_type_form', :builder => form, :property_type => PropertyType.new
++        page << %{
++          var new_property_type_id = "new_" + new Date().getTime();
++          $('property_types').insert({ bottom: "#{ escape_javascript property_type }".replace(/new_\\d+/g, new_property_type_id) });
++        }
++      end
++    end
++  
+ end
+diff --git a/app/models/property_type.rb b/app/models/property_type.rb
+index 9507a1773dbeaa3aaf077f408a074a878f0b0110..0b2cf2738cf9d1b2137bddd1bc7e669af1e6363e 100644
+--- a/app/models/property_type.rb
++++ b/app/models/property_type.rb
+@@ -1,5 +1,9 @@
+ class PropertyType < ActiveRecord::Base
+   
++  VALID_TYPES = %w( String Date Location )
++  
++  validates_inclusion_of :type_name, :in => VALID_TYPES
++  
+   belongs_to :topic
+   
+ end
+diff --git a/app/models/topic.rb b/app/models/topic.rb
+index bb23febe6bcd0e0a62ece25bad29c00a735a4457..c866671ebd420c3968aa7c6eaa74643a3643b22d 100644
+--- a/app/models/topic.rb
++++ b/app/models/topic.rb
+@@ -5,8 +5,11 @@ class Topic < ActiveRecord::Base
+   has_and_belongs_to_many :tags, :class_name => 'Topic', :join_table => :topics_topics, :foreign_key => :child_id, :association_foreign_key => :parent_id
+   has_and_belongs_to_many :topics, :class_name => 'Topic', :join_table => :topics_topics, :foreign_key => :parent_id, :association_foreign_key => :child_id
+   has_many :occurrences, :through => :topics_occurrences
+-
++  
++  accepts_nested_attributes_for :property_types, :allow_destroy => true
++  
+   def properties_to_use
+     tags.map(&:property_types).flatten
+   end
++  
+ end
+\ No newline at end of file
+diff --git a/app/stylesheets/screen.sass b/app/stylesheets/screen.sass
+index 0ca30638434526709bd1e558b26e9835f8f183d6..42f3a1b19d4cfcdabc49f85387f32f9c63268766 100644
+--- a/app/stylesheets/screen.sass
++++ b/app/stylesheets/screen.sass
+@@ -1,6 +1,7 @@
+ @import blueprint.sass
+ @import blueprint/modules/scaffolding.sass
+ @import compass/reset.sass
++@import blueprint/modules/fancy_type
+ 
+ +blueprint
+ // Remove the scaffolding when you're ready to start doing visual design.
+diff --git a/app/views/layouts/application.html.haml b/app/views/layouts/application.html.haml
+index aa18aa2b27e70a3232c70036bdd3865103499bac..49d2659e47c606eb1da639bb3b872b4331d95376 100644
+--- a/app/views/layouts/application.html.haml
++++ b/app/views/layouts/application.html.haml
+@@ -9,6 +9,7 @@
+     /[if IE]
+       = stylesheet_link_tag 'ie.css', :media => 'screen, projection'
+     = stylesheet_link_tag 'scaffold'
++    = javascript_include_tag :defaults
+   %body{body_attributes}
+ 
+     #container
+diff --git a/app/views/topics/_form.html.haml b/app/views/topics/_form.html.haml
+new file mode 100644
+index 0000000000000000000000000000000000000000..390b5a36b16f2d99f4f2441f82599ff9b11b6d80
+--- /dev/null
++++ b/app/views/topics/_form.html.haml
+@@ -0,0 +1,25 @@
++-form_for @topic do |f|
++  =f.label "Name"
++  %br
++  =f.text_field :name
++  %br
++  %br
++  #property_types
++    -f.fields_for :property_types do |pf|
++      
++      =pf.label 'Property Name'
++      %br
++      =pf.text_field :name
++      %br
++      %br
++      =pf.label 'Property Type'
++      %br
++      =pf.select :type_name, PropertyType::VALID_TYPES
++      %br
++      %br
++    
++  =add_property_type_link "Add a property", f
++  %br
++  %br
++  =f.submit 'Save'
++  
+\ No newline at end of file
+diff --git a/app/views/topics/_property.html.haml b/app/views/topics/_property.html.haml
+new file mode 100644
+index 0000000000000000000000000000000000000000..a0584ddff7c89dd0537a8ef29a92359be2bb7b3b
+--- /dev/null
++++ b/app/views/topics/_property.html.haml
+@@ -0,0 +1,3 @@
++.property
++  %span.name property.property_type.name
++  %span.value : property_display(property)
+\ No newline at end of file
+diff --git a/app/views/topics/_property_list.html.haml b/app/views/topics/_property_list.html.haml
+new file mode 100644
+index 0000000000000000000000000000000000000000..90755c9b0ababb82861170b7c099da5ff5622525
+--- /dev/null
++++ b/app/views/topics/_property_list.html.haml
+@@ -0,0 +1,5 @@
++%span.property
++  %span.name property.property_type.name
++  %span.value property_display(property)
++
++&nbsp;|&nbsp;
+\ No newline at end of file
+diff --git a/app/views/topics/_property_type.haml b/app/views/topics/_property_type.haml
+new file mode 100644
+index 0000000000000000000000000000000000000000..932fe72e7bb1e2166a74d2124ff667899190e2fb
+--- /dev/null
++++ b/app/views/topics/_property_type.haml
+@@ -0,0 +1,3 @@
++.property_type
++  %span.name
++    == #{property_type.name} (#{property_type.type_name})
+\ No newline at end of file
+diff --git a/app/views/topics/_property_type_form.haml b/app/views/topics/_property_type_form.haml
+new file mode 100644
+index 0000000000000000000000000000000000000000..de6b19db72271cb7ff66eafa9048e9c6bd3a6ab8
+--- /dev/null
++++ b/app/views/topics/_property_type_form.haml
+@@ -0,0 +1,12 @@
++-builder.fields_for :property_types, property_type do |pf|
++
++  =pf.label 'Property Name'
++  %br
++  =pf.text_field :name
++  %br
++  %br
++  =pf.label 'Property Type'
++  %br
++  =pf.select :type_name, PropertyType::VALID_TYPES
++  %br
++  %br
+\ No newline at end of file
+diff --git a/app/views/topics/_topic.html.haml b/app/views/topics/_topic.html.haml
+new file mode 100644
+index 0000000000000000000000000000000000000000..07c4cc10d3d20bd43a7b608f570779d1d3e66144
+--- /dev/null
++++ b/app/views/topics/_topic.html.haml
+@@ -0,0 +1,5 @@
++%dl.topic
++  %dd.date topic.created_at.to_s(:us_date)
++  %dt.title topic.name
++  %dd.description truncate(topic.text, 150)
++  =partial 'property', :collection => topic.properties
+\ No newline at end of file
+diff --git a/app/views/topics/edit.html.haml b/app/views/topics/edit.html.haml
+new file mode 100644
+index 0000000000000000000000000000000000000000..7941ee810f1d5988ba7301354f66c8e9d1e1cf8b
+--- /dev/null
++++ b/app/views/topics/edit.html.haml
+@@ -0,0 +1,3 @@
++%h1== Edit Topic '#{@topic.name}'
++
++=partial 'form'
+\ No newline at end of file
+diff --git a/app/views/topics/index.html.haml b/app/views/topics/index.html.haml
+new file mode 100644
+index 0000000000000000000000000000000000000000..2cac3bdee3b7317dd139f18997a77719b84d63fe
+--- /dev/null
++++ b/app/views/topics/index.html.haml
+@@ -0,0 +1,4 @@
++%h1 My Topics
++
++#topics
++  =partial @topics
+\ No newline at end of file
+diff --git a/app/views/topics/new.html.haml b/app/views/topics/new.html.haml
+new file mode 100644
+index 0000000000000000000000000000000000000000..0b24973206f8a64c0b642112c4ca220d2a11b9bc
+--- /dev/null
++++ b/app/views/topics/new.html.haml
+@@ -0,0 +1,3 @@
++%h1 New Topic
++
++=partial 'form'
+\ No newline at end of file
+diff --git a/app/views/topics/show.html.haml b/app/views/topics/show.html.haml
+new file mode 100644
+index 0000000000000000000000000000000000000000..ee1682dc31878d122729ae1579bea81081947e3c
+--- /dev/null
++++ b/app/views/topics/show.html.haml
+@@ -0,0 +1,11 @@
++%h1= @topic.name
++
++#properties
++  =partial 'property', :collection => @topic.properties
++  
++#property_types
++  %h3== Everything tagged '#{@topic.name}' has these fields:
++  =partial 'property_type', :collection => @topic.property_types
++  
++.links
++  = link_to 'Edit', edit_topic_url(@topic)
+\ No newline at end of file
+diff --git a/config/initializers/formats.rb b/config/initializers/formats.rb
+new file mode 100644
+index 0000000000000000000000000000000000000000..009e6473284142705a4254abe7afba7edbef249c
+--- /dev/null
++++ b/config/initializers/formats.rb
+@@ -0,0 +1,23 @@
++# Include your application configuration below
++my_date_formats = {
++  :us_date => '%A, %b %e',
++  :uk_date => '%e %b %Y',
++  :main_time => '%l:%M %p',
++  :main_time_no_space => '%l:%M%p',
++  :full_time => '%I:%M:%S %p',
++  :chart_time => '%l:%M',
++  :small_date => '%b %e',
++  :full_date => '%B %e, %Y',
++  :full_short_date => '%b %e, %Y',
++  :birthday => '%B %e',
++  :day_name => '%A',
++  :award => '%b %Y',
++  :day_of_week => '%A',
++  :month_name => '%B',
++  :month_name_short => '%b',
++  :day_of_month => '%d',
++  :excel_date => '%m/%d/%Y %H:%M:%S',
++  :short_excel_date => '%m/%d/%Y',
++  :sitemap_date => '%Y-%m-%d',
++  :time_zone => '%Z'
++}
+\ No newline at end of file
+diff --git a/config/routes.rb b/config/routes.rb
+index 9268a3a4049a7669085c8fc1a5b1eb3714bb135d..eb1ca26d578c0c97c34e81558ba3797162a53f10 100644
+--- a/config/routes.rb
++++ b/config/routes.rb
+@@ -37,7 +37,7 @@ ActionController::Routing::Routes.draw do |map|
+ 
+   map.resource :account, :controller => 'users'
+   
+-  map.resources :topic
++  map.resources :topics
+   
+   map.tags 'topic/:id/topics', :controller => 'topics', :action => 'topics'
+   
+diff --git a/db/schema.rb b/db/schema.rb
+index 3dd3d782601f3176f4bb359ca976d2b70ad601cc..d4b566ed03f57e70e625083a17716bd3174730b9 100644
+--- a/db/schema.rb
++++ b/db/schema.rb
+@@ -28,9 +28,9 @@ ActiveRecord::Schema.define(:version => 20090522131220) do
+   end
+ 
+   create_table "open_id_authentication_nonces", :force => true do |t|
+-    t.integer "timestamp",  :null => false
++    t.integer "timestamp",                  :null => false
+     t.string  "server_url"
+-    t.string  "salt",       :null => false
++    t.string  "salt",       :default => "", :null => false
+   end
+ 
+   create_table "properties", :force => true do |t|
+@@ -50,7 +50,7 @@ ActiveRecord::Schema.define(:version => 20090522131220) do
+   end
+ 
+   create_table "sessions", :force => true do |t|
+-    t.string   "session_id", :null => false
++    t.string   "session_id", :default => "", :null => false
+     t.text     "data"
+     t.datetime "created_at"
+     t.datetime "updated_at"
+@@ -90,8 +90,8 @@ ActiveRecord::Schema.define(:version => 20090522131220) do
+     t.string   "login"
+     t.string   "crypted_password"
+     t.string   "password_salt"
+-    t.string   "persistence_token",                :null => false
+-    t.integer  "login_count",       :default => 0, :null => false
++    t.string   "persistence_token", :default => "", :null => false
++    t.integer  "login_count",       :default => 0,  :null => false
+     t.datetime "last_request_at"
+     t.datetime "last_login_at"
+     t.datetime "current_login_at"
+diff --git a/vendor/plugins/better_partials/MIT-LICENSE b/vendor/plugins/better_partials/MIT-LICENSE
+new file mode 100644
+index 0000000000000000000000000000000000000000..d89bccdec1fc738462cd4d8d8be36b26e8a9fde3
+--- /dev/null
++++ b/vendor/plugins/better_partials/MIT-LICENSE
+@@ -0,0 +1,20 @@
++Copyright (c) 2008 Jacques Crocker (www.railsjedi.com)
++
++Permission is hereby granted, free of charge, to any person obtaining
++a copy of this software and associated documentation files (the
++"Software"), to deal in the Software without restriction, including
++without limitation the rights to use, copy, modify, merge, publish,
++distribute, sublicense, and/or sell copies of the Software, and to
++permit persons to whom the Software is furnished to do so, subject to
++the following conditions:
++
++The above copyright notice and this permission notice shall be
++included in all copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+diff --git a/vendor/plugins/better_partials/README.rdoc b/vendor/plugins/better_partials/README.rdoc
+new file mode 100644
+index 0000000000000000000000000000000000000000..47dde85d97d0a2c643f2bcb99ddf5a8a6556a56a
+--- /dev/null
++++ b/vendor/plugins/better_partials/README.rdoc
+@@ -0,0 +1,61 @@
++= better_partials
++Provides syntactic sugar for render :partial.
++
++== Examples
++
++=== Render a partial
++  <%= partial "people/search_box" %>
++
++=== Pass some parameters in
++  <% form_for @person do |f| %>
++    <%= partial "people/form", :f => f %>
++  <% end %>
++
++=== Pass in a collection
++
++  <%= partial "people/person", :collection => @people %>
++
++Or the terse way...
++
++  <%= partials @people %>
++
++Also works, but not as nice reading...
++
++  <%= partial @people %>
++
++=== Rendering a block
++
++  <% partial "people/box" do %>
++    Inner content goes here.. (gets called in your partial's yield statement)
++  <% end %>
++
++=== Special Options 
++These special options pass through to render :partial. All others are passed through as :locals.
++  
++  :collection
++  :spacer_template
++  :object
++  :use_full_path
++
++== Installation
++=== Install Plugin
++  
++  script/plugin install git://github.com/jcnetdev/better_partials.git
++
++=== Install Gem
++
++If you're using Rails 2.1, you -can- should use the plugin as a gem.
++
++Add this to your environment.rb:
++
++  config.gem 'jeremyw-better_partials', :version => '>= 1.1.3', :lib => 'better_partials', :source => 'http://gems.github.com'
++
++To install:
++
++  rake gems:install
++  
++To unpack:
++
++  rake gems:unpack
++
++Copyright (c) 2008 Jacques Crocker (www.railsjedi.com), released under the MIT license
+\ No newline at end of file
+diff --git a/vendor/plugins/better_partials/Rakefile b/vendor/plugins/better_partials/Rakefile
+new file mode 100644
+index 0000000000000000000000000000000000000000..f0c92d005f047f4eadeeaf8beae1ffc659e7e2e5
+--- /dev/null
++++ b/vendor/plugins/better_partials/Rakefile
+@@ -0,0 +1,22 @@
++require 'rake'
++require 'rake/testtask'
++require 'rake/rdoctask'
++
++desc 'Default: run unit tests.'
++task :default => :test
++
++desc 'Test the betterpartials plugin.'
++Rake::TestTask.new(:test) do |t|
++  t.libs << 'lib'
++  t.pattern = 'test/**/*_test.rb'
++  t.verbose = true
++end
++
++desc 'Generate documentation for the betterpartials plugin.'
++Rake::RDocTask.new(:rdoc) do |rdoc|
++  rdoc.rdoc_dir = 'rdoc'
++  rdoc.title    = 'Betterpartials'
++  rdoc.options << '--line-numbers' << '--inline-source'
++  rdoc.rdoc_files.include('README')
++  rdoc.rdoc_files.include('lib/**/*.rb')
++end
+diff --git a/vendor/plugins/better_partials/better_partials.gemspec b/vendor/plugins/better_partials/better_partials.gemspec
+new file mode 100644
+index 0000000000000000000000000000000000000000..99e793ba20463c92522cfb6c3e7a72b724abb444
+--- /dev/null
++++ b/vendor/plugins/better_partials/better_partials.gemspec
+@@ -0,0 +1,26 @@
++Gem::Specification.new do |s|
++  s.name = 'better_partials'
++  s.version = '1.1.3'
++  s.date = '2009-04-13'
++  
++  s.summary = "Makes calling partials in views look better and more fun."
++  s.description = "Wrapper around render :partial that removes the need to use :locals, and allows blocks to be taken easily"
++  
++  s.authors = ['RailsJedi']
++  s.email = 'railsjedi@gmail.com'
++  s.homepage = 'http://www.railsjedi.com/posts/22'
++  
++  s.has_rdoc = true
++  s.rdoc_options = ["--main", "README"]
++  s.extra_rdoc_files = ["README"]
++
++  s.files = ["MIT-LICENSE",
++             "README",
++             "Rakefile",
++             "better_partials.gemspec",
++             "init.rb",
++             "lib/better_partials.rb",
++             "uninstall.rb"]
++
++end
++
+diff --git a/vendor/plugins/better_partials/init.rb b/vendor/plugins/better_partials/init.rb
+new file mode 100644
+index 0000000000000000000000000000000000000000..24c8fd02d8580a9d068163d5499b98fcb76fe0ca
+--- /dev/null
++++ b/vendor/plugins/better_partials/init.rb
+@@ -0,0 +1 @@
++require 'better_partials'
+diff --git a/vendor/plugins/better_partials/lib/better_partials.rb b/vendor/plugins/better_partials/lib/better_partials.rb
+new file mode 100644
+index 0000000000000000000000000000000000000000..e4e0a39d5873127d409165e3a263fa3d9e414461
+--- /dev/null
++++ b/vendor/plugins/better_partials/lib/better_partials.rb
+@@ -0,0 +1,94 @@
++module BetterPartials
++  module Helpers
++    
++    # Renders a Partial intelligently
++    # 
++    # Normal partial call:
++    #  <%= partial "my_partial" %>
++    # same as...
++    #  <%= render :partial => "my_partial" %>
++    # 
++    # Partial call with arguments:
++    #  <%= partial "my_partial", :arg1 => "test" %>
++    # same as...
++    #  <%= render :partial => "my_partial", :locals => {:arg1 => "test"}  %>
++    # 
++    # Partial call with collection (and arguments)
++    #  <%= partial "my_partial", :collection => @items, :arg1 => "test" %>
++    #  same as...
++    #  <%= render :partial => "my_partial", :collection => @items, :locals => {:arg1 => "test", :collection => @items} %>
++    # 
++    # Partial also supports blocks naturally
++    # <% partial "my_partial", :collection => @items, :arg1 => "test" do %>
++    #   inner partial content
++    # <% end %>
++    # same as...
++    # <% render :layout => "my_partial", :collection => @items, :arg1 => "test" do %>
++    #   inner partial content
++    # <% end %>
++    def partial(partial_path, options = {}, &block)
++
++      # partial_options will build up the hash parameter to pass into render()
++      partial_options = {}
++      
++      # partial_locals will build up the hash parameter to pass into the :locals option
++      partial_locals = {}
++
++      # setup partial path
++      partial_options[:partial] = partial_path
++    
++      # handle case where options is a straight up active record model
++      if options.is_a? ActiveRecord::Base
++        partial_options[:object] = options
++      else      
++        # find all the special options to passoff to render (the rest we'll put in :locals)
++        passoff_options = [
++          :collection,
++          :spacer_template,
++          :object, 
++          :use_full_path,
++          :as
++        ]
++        
++        # cycle through and add these options directly to partial_options
++        passoff_options.each do |passoff_option|
++          # only assign if passoff option exists
++          if options.has_key?(passoff_option)
++            # move the option from options to partial_options
++            partial_options[passoff_option] = options.delete(passoff_option)
++          end
++        end
++            
++        # move whats left of the remaining options into partial_locals
++        partial_locals = options.merge(partial_locals)
++      end
++    
++      # set partial locals
++      partial_options[:locals] = partial_locals
++      if block_given?
++        # swap layout and partial options
++        partial_options[:layout] = partial_options.delete(:partial)
++
++        # render the partial
++        render(partial_options, &block)
++
++        # return nothing since render :layout will write directly to EROUT
++        return nil
++      else
++        # normal render call
++        return render(partial_options)
++      end
++    end
++    
++    # make it more suh-man-tech
++    # e.g. partials @people
++    def partials(collection)
++      partial(collection) if collection
++    end
++  end
++end
++
++
++if defined?(Rails) and defined?(ActionView)
++  ActionView::Base.send :include, BetterPartials::Helpers
++end
+diff --git a/vendor/plugins/better_partials/uninstall.rb b/vendor/plugins/better_partials/uninstall.rb
+new file mode 100644
+index 0000000000000000000000000000000000000000..97383334634d7e323699932440387d73052162d3
+--- /dev/null
++++ b/vendor/plugins/better_partials/uninstall.rb
+@@ -0,0 +1 @@
++# Uninstall hook code here
+-- 
+1.5.5.1
+

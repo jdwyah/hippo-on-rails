@@ -1,0 +1,11 @@
+%h1= @topic.name
+
+#properties
+  =partial 'property', :collection => @topic.properties
+  
+#property_types
+  %h3== Everything tagged '#{@topic.name}' has these fields:
+  =partial 'property_type', :collection => @topic.property_types
+  
+.links
+  = link_to 'Edit', edit_topic_url(@topic)

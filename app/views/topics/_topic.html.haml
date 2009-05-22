@@ -1,0 +1,5 @@
+%dl.topic
+  %dd.date topic.created_at.to_s(:us_date)
+  %dt.title topic.name
+  %dd.description truncate(topic.text, 150)
+  =partial 'property', :collection => topic.properties

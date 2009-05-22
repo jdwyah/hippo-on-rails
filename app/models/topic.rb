@@ -5,8 +5,11 @@ class Topic < ActiveRecord::Base
   has_and_belongs_to_many :tags, :class_name => 'Topic', :join_table => :topics_topics, :foreign_key => :child_id, :association_foreign_key => :parent_id
   has_and_belongs_to_many :topics, :class_name => 'Topic', :join_table => :topics_topics, :foreign_key => :parent_id, :association_foreign_key => :child_id
   has_many :occurrences, :through => :topics_occurrences
-
+  
+  accepts_nested_attributes_for :property_types, :allow_destroy => true
+  
   def properties_to_use
     tags.map(&:property_types).flatten
   end
+  
 end

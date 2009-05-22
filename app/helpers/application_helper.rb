@@ -11,12 +11,22 @@ module ApplicationHelper
     "#{@controller.controller_name.dasherize}-#{@controller.action_name.dasherize}"
   end
   
-  def param_display(parameter)
-    display = case parameter.type
+  def property_display(property)
+    display = case property.property_type.type
       when 'String' : parameter.value
-      when 'Date' : Date.parse(parameter.value).to_formatted_s(:main_date)
+      when 'Date' : Date.parse(parameter.value).to_s(:main_date)
       else 'NOT DONE YET'
     end
   end
+  
+  def add_property_type_link(name, form)
+      link_to_function name do |page|
+        property_type = partial 'topics/property_type_form', :builder => form, :property_type => PropertyType.new
+        page << %{
+          var new_property_type_id = "new_" + new Date().getTime();
+          $('property_types').insert({ bottom: "#{ escape_javascript property_type }".replace(/new_\\d+/g, new_property_type_id) });
+        }
+      end
+    end
   
 end

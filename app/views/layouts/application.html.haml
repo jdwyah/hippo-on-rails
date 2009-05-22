@@ -5,6 +5,7 @@
     %meta{'http-equiv' => "content-type", :content => "text/html;charset=UTF-8"}
     %title= @browser_title || 'Default Browser Title'
     = stylesheet_link_tag 'application'
+    = javascript_include_tag :defaults
   %body{body_attributes}
     #root
       #header

@@ -37,7 +37,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resource :account, :controller => 'users'
   
-  map.resources :topic
+  map.resources :topics
   
   map.tags 'topic/:id/topics', :controller => 'topics', :action => 'topics'
   

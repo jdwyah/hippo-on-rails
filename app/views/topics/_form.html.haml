@@ -1,0 +1,25 @@
+-form_for @topic do |f|
+  =f.label "Name"
+  %br
+  =f.text_field :name
+  %br
+  %br
+  #property_types
+    -f.fields_for :property_types do |pf|
+      
+      =pf.label 'Property Name'
+      %br
+      =pf.text_field :name
+      %br
+      %br
+      =pf.label 'Property Type'
+      %br
+      =pf.select :type_name, PropertyType::VALID_TYPES
+      %br
+      %br
+    
+  =add_property_type_link "Add a property", f
+  %br
+  %br
+  =f.submit 'Save'
+  

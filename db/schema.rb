@@ -28,9 +28,9 @@ ActiveRecord::Schema.define(:version => 20090522165628) do
   end
 
   create_table "open_id_authentication_nonces", :force => true do |t|
-    t.integer "timestamp",  :null => false
+    t.integer "timestamp",                  :null => false
     t.string  "server_url"
-    t.string  "salt",       :null => false
+    t.string  "salt",       :default => "", :null => false
   end
 
   create_table "properties", :force => true do |t|
@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(:version => 20090522165628) do
   end
 
   create_table "sessions", :force => true do |t|
-    t.string   "session_id", :null => false
+    t.string   "session_id", :default => "", :null => false
     t.text     "data"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -89,8 +89,8 @@ ActiveRecord::Schema.define(:version => 20090522165628) do
     t.string   "login"
     t.string   "crypted_password"
     t.string   "password_salt"
-    t.string   "persistence_token",                :null => false
-    t.integer  "login_count",       :default => 0, :null => false
+    t.string   "persistence_token", :default => "", :null => false
+    t.integer  "login_count",       :default => 0,  :null => false
     t.datetime "last_request_at"
     t.datetime "last_login_at"
     t.datetime "current_login_at"

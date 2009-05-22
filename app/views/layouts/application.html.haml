@@ -9,21 +9,21 @@
   %body{body_attributes}
     #root
       #header
-        %h1 Welcome to MyHippocampus
+        #app-title
+          %img{:src => image_path('hippo-header.png'), :alt => 'hippo header'}
 
-        == #{pluralize User.logged_in.count, "user"} currently logged in
-        %br
-
-        -if !current_user
-          = link_to "Register", new_account_path
-          |
-          = link_to "Log In", new_user_session_path
-        -else
-          = link_to "My Account", account_path |
-          = link_to "Logout", user_session_path, :method => :delete, :confirm => "Are you sure you want to logout?"
-
-        %p{:style=>"color: green"}= flash[:notice]
+        #app-links
+          /== #{pluralize User.logged_in.count, "user"} currently logged in
+          -if !current_user
+            = link_to "Register", new_account_path
+            |
+            = link_to "Log In", new_user_session_path
+          -else
+            = link_to "My Account", account_path |
+            = link_to "Logout", user_session_path, :method => :delete, :confirm => "Are you sure you want to logout?"
       #content
+        %p{:style=>"color: green"}= flash[:notice]
+
         = yield
       #root_footer
     #footer

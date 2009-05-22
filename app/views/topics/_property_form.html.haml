@@ -1,0 +1,10 @@
+-builder.fields_for :properties, property_form do |pf|
+  
+  =label_tag property_form.property_type.name
+  %br
+  =property_edit pf
+  %br
+  %br
+  =pf.text_field :property_type_id
+  %br
+  %br

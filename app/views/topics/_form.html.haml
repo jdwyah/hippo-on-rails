@@ -5,17 +5,7 @@
   %br
   %br
   #properties
-    -@topic.properties.each do |property|
-      -f.fields_for :properties, property do |pf|
-        
-        =label_tag property.property_type.name
-        %br
-        =property_edit pf
-        %br
-        %br
-        =pf.text_field :property_type_id
-        %br
-        %br
+    =partial 'property_form', :collection => @topic.properties, :builder => f
   
   #property_types
     -f.fields_for :property_types do |pt|
